@@ -1,0 +1,25 @@
+version: "3.9"
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.10.1.0/24
+
+services: 
+  api:
+    build: .
+    depends_on: 
+      - mongo
+    environment: 
+      - PORT=4000
+      - MONGO_URI=mongodb://mongo:27017/proyecto
+      - APPLICATION_NAME=Backend for project React
+      - JWT_SECRET=niWAiFZrAeMp5wFNNFksnfpwnr!!6464383nm!
+      - CACHE_KEY=myStrongPasswordWorld
+      - SWAGGER_DOC=swaggerPROD
+    ports: 
+      - "4000:4000"
+  mongo:
+    image: mongo
