@@ -1,4 +1,5 @@
 class SignUpDto {
+    name = "";
     email = "";
     password = "";
 }

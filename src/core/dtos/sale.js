@@ -1,7 +1,7 @@
 class SaleDto {
     _id = "";
-    userId = "";
-    carId = "";
+    user = "";
+    car = "";
     price = "";
 }
 

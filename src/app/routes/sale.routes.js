@@ -1,14 +1,12 @@
 const { Router } = require('express');
-const { ParseIntMiddleware, CacheMiddleware } = require('../../infrastructure/middlewares')
+const { ParseIntMiddleware, CacheMiddleware, AuthMiddleware, RoleMiddleware } = require('../../infrastructure/middlewares')
+const { Role } = require('../../infrastructure/helpers');
 const { CACHE_TIME } = require('../../infrastructure/helpers');
 
 module.exports = function ({ SaleController }) {
     const router = Router();
 
-    router.get("/", [ParseIntMiddleware, CacheMiddleware(CACHE_TIME.TEN_MINUTES)], SaleController.getAll);
-    router.get("/:saleId", [ParseIntMiddleware], SaleController.get);
-    router.post("/", SaleController.create);
-    router.patch("/:saleId", [ParseIntMiddleware], SaleController.update);
-    router.delete("/:saleId", [ParseIntMiddleware], SaleController.delete);
+    router.get("/", [ParseIntMiddleware, AuthMiddleware, RoleMiddleware([Role.User, Role.Admin]), CacheMiddleware(CACHE_TIME.TEN_MINUTES)], SaleController.getAll);
+    router.post("/", [AuthMiddleware, RoleMiddleware([Role.Admin])], SaleController.create);
     return router;
 }
