@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "description": "Backend Boilerplate",
+    "description": "Backend of project Concessionaire",
     "version": "1.0.0",
-    "title": "Swagger Document Boilerplate",
+    "title": "Concessionaire RESTful",
     "contact": {
       "email": "arthur.quezada98@gmail.com"
     },
@@ -14,22 +14,104 @@
   },
   "host": "localhost:4000",
   "basePath": "/v1/api",
-  "tags": [
+  "tags": [{
+      "name": "Auth",
+      "description": "Everything about auth"
+    },
     {
       "name": "User",
       "description": "Everything about users"
+    },
+    {
+      "name": "Companies",
+      "description": "Everything about companies"
+    },
+    {
+      "name": "Cars",
+      "description": "Everything about cars"
+    },
+    {
+      "name": "Distributors",
+      "description": "Everything about distributors"
+    },
+    {
+      "name": "Sales",
+      "description": "Everything about sales"
     }
   ],
   "schemes": ["http", "https"],
   "paths": {
-    "/user": {
+    "/auth/signup": {
+      "post": {
+        "tags": ["Auth"],
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/SingUp"
+          }
+        }],
+        "responses": {
+          "201": {
+            "description": "Register success"
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "tags": ["Auth"],
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/SingIn"
+          }
+        }],
+        "responses": {
+          "400": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/users": {
+      "post": {
+        "tags": ["User"],
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/User"
+          }
+        }],
+        "responses": {
+          "403": {
+            "description": "Role Invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      },
       "get": {
         "tags": ["User"],
-        "summary": "Finds All the Users",
         "description": "",
         "produces": ["application/json"],
-        "parameters": [
-          {
+        "parameters": [{
             "name": "pageNum",
             "type": "number",
             "in": "query",
@@ -55,24 +137,27 @@
           "400": {
             "description": "Invalid status value"
           }
-        }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
       }
     },
-    "/user/{id}": {
+    "/users/{id}": {
       "get": {
         "tags": ["User"],
-        "summary": "Find one user",
         "description": "",
         "produces": ["application/json"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "string",
-            "description": "User Id",
-            "required": true
-          }
-        ],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "User Id",
+          "required": true
+        }],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -86,29 +171,25 @@
           "400": {
             "description": "Invalid tag value"
           }
-        }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
       },
       "patch": {
         "tags": ["User"],
-        "summary": "Update one user",
-        "description": "",
+        "description": "Only endpoint managers",
         "produces": ["application/json"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "string",
-            "description": "User Id",
-            "required": true
-          },
-          {
-            "in": "header",
-            "name": "Authorization",
-            "description": "Authorization header fOr JWT",
-            "required": true,
-            "type": "string"
-          }
-        ],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "User Id",
+          "required": true
+        }],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -119,30 +200,85 @@
               }
             }
           },
-          "400": {
-            "description": "Invalid tag value"
+          "403": {
+            "description": "Role Invalid"
           }
-        }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
       },
       "delete": {
         "tags": ["User"],
-        "summary": "Delete one user",
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "User Id",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "403": {
+            "description": "Role invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      }
+    },
+    "/cars": {
+      "post": {
+        "tags": ["Cars"],
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "description": "company is company Id - distributor is distributor Id",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/Car"
+          }
+        }],
+        "responses": {
+          "403": {
+            "description": "Role Invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      },
+      "get": {
+        "tags": ["Cars"],
         "description": "",
         "produces": ["application/json"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "type": "string",
-            "description": "User Id",
-            "required": true
+        "parameters": [{
+            "name": "pageNum",
+            "type": "number",
+            "in": "query",
+            "required": false
           },
           {
-            "in": "header",
-            "name": "Authorization",
-            "description": "Authorization token with admin role",
-            "required": true,
-            "type": "string"
+            "name": "pageSize",
+            "type": "number",
+            "in": "query",
+            "required": false
           }
         ],
         "responses": {
@@ -151,32 +287,606 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/User"
+                "$ref": "#/definitions/Car"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      }
+    },
+    "/cars/{id}": {
+      "get": {
+        "tags": ["Cars"],
+        "description": "",
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "Car Id",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/Car"
               }
             }
           },
           "400": {
             "description": "Invalid tag value"
           }
-        }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      },
+      "patch": {
+        "tags": ["Cars"],
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "Car Id",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Car"
+              }
+            }
+          },
+          "403": {
+            "description": "Role Invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      },
+      "delete": {
+        "tags": ["Cars"],
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "Car Id",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "403": {
+            "description": "Role invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      }
+    },
+    "/companies": {
+      "post": {
+        "tags": ["Companies"],
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/Company"
+          }
+        }],
+        "responses": {
+          "403": {
+            "description": "Role Invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      },
+      "get": {
+        "tags": ["Companies"],
+        "description": "",
+        "produces": ["application/json"],
+        "parameters": [{
+            "name": "pageNum",
+            "type": "number",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "pageSize",
+            "type": "number",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Company"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      }
+    },
+    "/companies/{id}": {
+      "get": {
+        "tags": ["Companies"],
+        "description": "",
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "Company Id",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/Company"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid tag value"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      },
+      "patch": {
+        "tags": ["Companies"],
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "Company Id",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Company"
+              }
+            }
+          },
+          "403": {
+            "description": "Role Invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      },
+      "delete": {
+        "tags": ["Companies"],
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "Company Id",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "403": {
+            "description": "Role invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      }
+    },
+    "/distributors": {
+      "post": {
+        "tags": ["Distributors"],
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/Distributor"
+          }
+        }],
+        "responses": {
+          "403": {
+            "description": "Role Invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      },
+      "get": {
+        "tags": ["Distributors"],
+        "description": "",
+        "produces": ["application/json"],
+        "parameters": [{
+            "name": "pageNum",
+            "type": "number",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "pageSize",
+            "type": "number",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Distributor"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      }
+    },
+    "/distributors/{id}": {
+      "patch": {
+        "tags": ["Distributors"],
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "Distributor Id",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Distributor"
+              }
+            }
+          },
+          "403": {
+            "description": "Role Invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      },
+      "delete": {
+        "tags": ["Distributors"],
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "name": "id",
+          "in": "path",
+          "type": "string",
+          "description": "Distributor Id",
+          "required": true
+        }],
+        "responses": {
+          "200": {
+            "description": "successful operation"
+          },
+          "403": {
+            "description": "Role invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      }
+    },
+    "/sales": {
+      "post": {
+        "tags": ["Sales"],
+        "description": "Only endpoint managers",
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "body",
+          "required": true,
+          "description": "user --> user Id \n car --> car Id",
+          "schema": {
+            "$ref": "#/definitions/Sale"
+          }
+        }],
+        "responses": {
+          "403": {
+            "description": "Role Invalid"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      },
+      "get": {
+        "tags": ["Sales"],
+        "description": "",
+        "produces": ["application/json"],
+        "parameters": [{
+            "name": "pageNum",
+            "type": "number",
+            "in": "query",
+            "required": false
+          },
+          {
+            "name": "pageSize",
+            "type": "number",
+            "in": "query",
+            "required": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Sale"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid status value"
+          }
+        },
+        "security": [{
+          "Token": [
+            "write:models",
+            "read:models"
+          ]
+        }]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Token": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "scopes": {
+        "write:models": "modify all in your account",
+        "read:models": "read your all"
       }
     }
   },
   "definitions": {
-    "User": {
+    "SingUp": {
       "type": "object",
+      "required": [
+        "email",
+        "password"
+      ],
       "properties": {
-        "_id": {
-          "type": "string"
-        },
         "name": {
           "type": "string"
         },
-        "username": {
+        "email": {
           "type": "string"
         },
         "password": {
           "type": "string"
+        }
+      }
+    },
+    "SingIn": {
+      "type": "object",
+      "required": [
+        "email",
+        "password"
+      ],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "isCustomer": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      }
+    },
+    "Company": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "country": {
+          "type": "string"
+        }
+      }
+    },
+    "Car": {
+      "type": "object",
+      "required": [
+        "model",
+        "price",
+        "company",
+        "distributor"
+      ],
+      "properties": {
+        "company": {
+          "type": "string"
+        },
+        "model": {
+          "type": "string"
+        },
+        "sold": {
+          "type": "boolean",
+          "default": false
+        },
+        "price": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "year": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "extras": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "distributor": {
+          "type": "string"
+        }
+      }
+    },
+    "Distributor": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "Sale": {
+      "type": "object",
+      "required": [
+        "user",
+        "car"
+      ],
+      "properties": {
+        "user": {
+          "type": "string"
+        },
+        "car": {
+          "type": "string"
+        },
+        "price": {
+          "type": "integer",
+          "format": "int64"
         }
       }
     }

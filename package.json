@@ -6,7 +6,8 @@
   "license": "MIT",
   "scripts": {
     "start": "node index.js",
-    "start:dev": "nodemon index.js"
+    "start:dev": "nodemon index.js",
+    "test": "jest"
   },
   "dependencies": {
     "@hapi/boom": "^9.1.4",
