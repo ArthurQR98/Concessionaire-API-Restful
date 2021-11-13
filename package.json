@@ -5,8 +5,10 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "node index.js",
-    "start:dev": "nodemon index.js",
+    "start:local": "nodemon index.js",
+    "start:dev": "NODE_ENV=development pm2 start index.js --log-date-format='YYYY-MM-DD HH:mm Z' --name Concessionaire-API",
+    "start:staging": "NODE_ENV=staging pm2 start index.js --log-date-format='YYYY-MM-DD HH:mm Z' --name Concessionaire-API",
+    "start:production": "NODE_ENV=production pm2 start index.js --log-date-format='YYYY-MM-DD HH:mm Z' --name Concessionaire-API",
     "test": "jest"
   },
   "dependencies": {
